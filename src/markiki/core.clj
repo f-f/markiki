@@ -3,7 +3,9 @@
             [clojure.string :as string]
             [clojure.java.io :as io]
             [clojure-watch.core :refer [start-watch]]
-            [cheshire.core :refer :all])
+            [cheshire.core :refer :all]
+            [hiccup.core :refer :all]
+            [hiccup.page :refer :all])
   (:gen-class))
 
 (def invalid-path-error
@@ -68,10 +70,31 @@
 (defn generate-wiki
   "Given a OS path it will explore the folder tree and write a json in path/out/"
   [path]
-  (when (not (.isDirectory (io/file (str path "/out"))))
-    (.mkdir (io/file (str path "/out"))))
   (spit (str path "/out/markiki.json")
         (generate-string (parse-tree (str path "/src") "") {:pretty true})))
+
+(defn copy-css
+  "Copies the css from the jar resources to the out/ folder"
+  [path]
+  (->> "markiki.css"
+       io/resource
+       io/file
+       slurp
+       (spit (str path "/out/markiki.css"))))
+
+(defn generate-index
+  "Writes the index.html in out/"
+  [path]
+  (spit (str path "/out/index.html")
+        (html5 [:head
+                (include-css "markiki.css")
+                [:title "Markiki - Your Markdown Wiki"]
+                [:meta {:http-equiv "Content-Type"
+                        :content "text/html; charset=utf-8"}]]
+               [:body
+                (include-js "markiki.js")
+                [:div
+                 [:h1.info "Home"]]])))
 
 (defn -main [& args]
   (let [[options arguments summary] (cli args
@@ -90,6 +113,10 @@
      (not path) (exit 1 (usage summary))
      (not (.isDirectory (io/file src-path))) (exit 1 invalid-path-error))
     ;; Start generating!
+    (when (not (.isDirectory (io/file (str path "/out"))))
+      (.mkdir (io/file (str path "/out"))))
+    (generate-index path)
+    (copy-css path)
     (generate-wiki path)
     (when (:watch options)
       (start-watch [{:path src-path
@@ -97,5 +124,5 @@
                      :bootstrap (fn [path] (println "[OK] Starting to watch " path))
                      :callback (fn [event filename]
                                  (println "[OK] Changes detected " event filename)
-                                 (generate-wiki path)) ;; TODO: optimize and regenerate only the file
+                                 (generate-wiki path))
                      :options {:recursive true}}]))))
