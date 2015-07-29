@@ -4,9 +4,13 @@
             [clojure.java.io :as io]
             [clojure-watch.core :refer [start-watch]]
             [cheshire.core :refer :all]
+            [me.raynes.fs :as fs]
             [hiccup.core :refer :all]
-            [hiccup.page :refer :all])
+            [hiccup.page :refer :all]
+            [cljs.build.api :as cljs])
   (:gen-class))
+
+;; TODO: port all java.io calls to fs lib
 
 (def invalid-path-error
   "[ERROR] Make sure you provided a valid path as an argument")
@@ -80,12 +84,12 @@
        io/resource
        io/file
        slurp
-       (spit (str path "/out/markiki.css"))))
+       (spit (str path "/markiki.css"))))
 
 (defn generate-index
   "Writes the index.html in out/"
   [path]
-  (spit (str path "/out/index.html")
+  (spit (str path "/index.html")
         (html5 [:head
                 (include-css "markiki.css")
                 [:title "Markiki - Your Markdown Wiki"]
@@ -96,6 +100,19 @@
                 [:div
                  [:h1.info "Home"]]])))
 
+(defn build-cljs
+  "Builds the Clojurescript files in the out/ folder"
+  [path]
+  (println "[OK] Building Clojurescript")
+  (let [start (System/nanoTime)]
+    (cljs/build "src"
+             {:main 'markiki.core
+              :output-to (str path "/js/markiki.js")
+              :output-dir (str path "/js/")
+              :verbose true})
+    (println "[OK] Clojurescript done. Elapsed"
+             (/ (- (System/nanoTime) start) 1e9) "seconds")))
+
 (defn -main [& args]
   (let [[options arguments summary] (cli args
                                          ["-h" "--help" "Print this help"
@@ -105,7 +122,8 @@
                                           :default false
                                           :flag true])
         path (first arguments)
-        src-path (str path "/src")]
+        src-path (str path "/src")
+        out-path (str path "/out")]
     ;; Handle help and error conditions
     ;; The user should provide a valid directory
     (cond
@@ -113,10 +131,11 @@
      (not path) (exit 1 (usage summary))
      (not (.isDirectory (io/file src-path))) (exit 1 invalid-path-error))
     ;; Start generating!
-    (when (not (.isDirectory (io/file (str path "/out"))))
-      (.mkdir (io/file (str path "/out"))))
-    (generate-index path)
-    (copy-css path)
+    (fs/delete-dir out-path)
+    (fs/mkdir out-path)
+    (build-cljs out-path)
+    (generate-index out-path)
+    (copy-css out-path)
     (generate-wiki path)
     (when (:watch options)
       (start-watch [{:path src-path

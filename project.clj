@@ -8,6 +8,7 @@
                  [clojure-watch "0.1.11"]
                  [cheshire "5.5.0"]
                  [hiccup "1.0.5"]
+                 [me.raynes/fs "1.4.6"]
                  [org.clojure/clojurescript "0.0-3308" :classifier "aot"
                   :exclusion [org.clojure/data.json]]
                  [org.clojure/data.json "0.2.6" :classifier "aot"]]
