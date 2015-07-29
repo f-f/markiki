@@ -77,28 +77,50 @@
   (spit (str path "/out/markiki.json")
         (generate-string (parse-tree (str path "/src") "") {:pretty true})))
 
-(defn copy-css
-  "Copies the css from the jar resources to the out/ folder"
-  [path]
-  (->> "markiki.css"
-       io/resource
-       io/file
-       slurp
-       (spit (str path "/markiki.css"))))
-
 (defn generate-index
   "Writes the index.html in out/"
   [path]
   (spit (str path "/index.html")
         (html5 [:head
-                (include-css "markiki.css")
+                [:meta {:charset "utf-8"}]
+                [:meta {:http-equiv "X-UA-Compatible" :content "IE=edge"}]
+                [:meta {:name "viewport"
+                        :content "width=device-width, initial-scale=1"}]
+                [:meta {:name "description" :content ""}]
+                [:meta {:name "author" :content ""}]
+                [:link {:rel "icon" :href "favicon.ico"}]
                 [:title "Markiki - Your Markdown Wiki"]
-                [:meta {:http-equiv "Content-Type"
-                        :content "text/html; charset=utf-8"}]]
+                (include-css "css/bootstrap.min.css")
+                (include-css "css/markiki.css")]
                [:body
-                (include-js "markiki.js")
-                [:div
-                 [:h1.info "Home"]]])))
+                [:nav.navbar.navbar-inverse.navbar-fixed-top
+                 [:div.container
+                  [:div.navbar-header
+                   [:button.navbar-toggle.collapsed
+                    {:type "button"
+                     :data-toggle "collapse"
+                     :data-target "#navbar"
+                     :aria-expanded "false"
+                     :aria-controls "navbar"}
+                    [:span.sr-only "Toggle navigation"]
+                    [:span.icon-bar]
+                    [:span.icon-bar]
+                    [:span.icon-bar]]
+                   [:a.navbar-brand {:href "#"} "Markiki"]]
+                  [:div#navbar.collapse.navbar-collapse
+                   [:ul.nav.navbar-nav
+                    [:li [:a {:href "#"} "Home"]]]]]]
+                [:div.container
+                 [:div.wrapper
+                  [:form
+                   [:div.form-group.has-error.has-feedback
+                    [:input#searchbar.form-control.input-lg
+                     {:type "text" :placeholder "Search"}]
+                    [:span.glyphicon.glyphicon-search.form-control-feedback]]]
+                  [:h1 "Markiki homepage"]
+                  [:p.lead "Fetch some content please!"]]]
+                (include-js "js/markiki.js")])))
+
 
 (defn build-cljs
   "Builds the Clojurescript files in the out/ folder"
@@ -133,9 +155,9 @@
     ;; Start generating!
     (fs/delete-dir out-path)
     (fs/mkdir out-path)
-    (build-cljs out-path)
     (generate-index out-path)
-    (copy-css out-path)
+    (doseq [p ["css" "fonts" "js"]] (fs/copy-dir (->> p io/resource io/file) out-path))
+    (build-cljs out-path)
     (generate-wiki path)
     (when (:watch options)
       (start-watch [{:path src-path
