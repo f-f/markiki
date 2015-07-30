@@ -51,6 +51,11 @@
                      [title (str text "\n" line)])))
                ["" ""])))
 
+(defn pathize
+  "Takes a string, returns a trimmed down string only w/ alphabet and hyphens"
+  [title]
+  (string/lower-case (string/replace title #"[^a-zA-Z-]" "")))
+
 (defn parse-tree
   "Given a path scan for md files, and return a list. If folder, recur."
   [path category]
@@ -62,12 +67,14 @@
                conj
                (if (.isDirectory f)
                  (let [cat-name (.getName f)
-                       [new-cat new-path] (map #(str %1 "/" cat-name) [category path])]
+                       [new-cat new-path] (map #(str %1 "/" cat-name)
+                                               [category path])]
                    {:category new-cat
                     :articles (parse-tree new-path new-cat)})
                  (let [[title content] (split-title (slurp (.getPath f)))]
                    {:title title
                     :lastModified (.lastModified f)
+                    :path (str category "/" (pathize title))
                     :text content})))))
   @json))
 
