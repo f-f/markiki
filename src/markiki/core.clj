@@ -54,7 +54,10 @@
 (defn pathize
   "Takes a string, returns a trimmed down string only w/ alphabet and hyphens"
   [title]
-  (string/lower-case (string/replace title #"[^a-zA-Z-]" "")))
+  (-> title
+      (string/replace #"[ ]{1,}" "-")
+      (string/replace #"[^a-zA-Z-]" "")
+      string/lower-case))
 
 (defn parse-tree
   "Given a path scan for md files, and return a list. If folder, recur."
@@ -69,20 +72,19 @@
                  (let [cat-name (.getName f)
                        [new-cat new-path] (map #(str %1 "/" cat-name)
                                                [category path])]
-                   {:category new-cat
-                    :articles (parse-tree new-path new-cat)})
+                   (parse-tree new-path new-cat))
                  (let [[title content] (split-title (slurp (.getPath f)))]
                    {:title title
-                    :lastModified (.lastModified f)
+                    :last-modified (.lastModified f)
                     :path (str category "/" (pathize title))
                     :text content})))))
-  @json))
+    @json))
 
 (defn generate-wiki
   "Given a OS path it will explore the folder tree and write a json in path/out/"
   [path]
   (spit (str path "/out/markiki.json")
-        (generate-string (parse-tree (str path "/src") "") {:pretty true})))
+        (generate-string (flatten (parse-tree (str path "/src") "")))))
 
 (defn generate-index
   "Writes the index.html in out/"
@@ -118,16 +120,11 @@
                    [:ul.nav.navbar-nav
                     [:li [:a {:href "#"} "Home"]]]]]]
                 [:div.container
-                 [:div.wrapper
-                  [:form
-                   [:div.form-group.has-error.has-feedback
-                    [:input#searchbar.form-control.input-lg
-                     {:type "text" :placeholder "Search"}]
-                    [:span.glyphicon.glyphicon-search.form-control-feedback]]]
+                 [:div#app
                   [:h1 "Markiki homepage"]
                   [:p.lead "Fetch some content please!"]]]
-                (include-js "js/markiki.js")])))
-
+                (include-js "js/markiki.js")
+                [:script "window.onload = function(){markiki.core.main();}"]])))
 
 (defn build-cljs
   "Builds the Clojurescript files in the out/ folder"
