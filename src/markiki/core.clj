@@ -100,6 +100,7 @@
                 [:link {:rel "icon" :href "favicon.ico"}]
                 [:title "Markiki - Your Markdown Wiki"]
                 (include-css "css/bootstrap.min.css")
+                (include-css "https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css")
                 (include-css "css/markiki.css")]
                [:body
                 [:nav.navbar.navbar-inverse.navbar-fixed-top
@@ -121,8 +122,8 @@
                     [:li [:a {:href "#"} "Home"]]]]]]
                 [:div.container
                  [:div#app
-                  [:h1 "Markiki homepage"]
-                  [:p.lead "Fetch some content please!"]]]
+                  [:i {:class "fa fa-cog fa-spin fa-5x"
+                       :style "margin-top:3em;"}]]]
                 (include-js "js/markiki.js")
                 [:script "window.onload = function(){markiki.core.main();}"]])))
 
