@@ -9,9 +9,14 @@
                  [cheshire "5.5.0"]
                  [hiccup "1.0.5"]
                  [me.raynes/fs "1.4.6"]
-                 [org.clojure/clojurescript "0.0-3308" :classifier "aot"
-                  :exclusion [org.clojure/data.json]]
-                 [org.clojure/data.json "0.2.6" :classifier "aot"]]
+                 [org.clojure/clojurescript "1.7.28"]
+                 [re-frame "0.4.1"]
+                 [prismatic/schema "0.4.3"]
+                 [cljs-ajax "0.3.14"]
+                 [secretary "1.2.3"]
+                 [com.cognitect/transit-cljs "0.8.220"]
+                 [reagent-forms "0.5.5"]
+                 [reagent-utils "0.1.5"]]
   :main ^:skip-aot markiki.core
   :jvm-opts ^:replace ["-Xmx1g" "-server"]
   :node-dependencies [[source-map-support "0.3.2"]]
