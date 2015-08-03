@@ -84,7 +84,7 @@
   "Given a OS path it will explore the folder tree and write a json in path/out/"
   [path]
   (spit (str path "/out/markiki.json")
-        (generate-string (flatten (parse-tree (str path "/src") "")))))
+        (generate-string (flatten (parse-tree (str path "/src") "")) {:pretty true})))
 
 (defn generate-index
   "Writes the index.html in out/"
