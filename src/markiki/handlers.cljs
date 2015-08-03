@@ -1,8 +1,9 @@
 (ns markiki.handlers
   (:require
-   [markiki.db :refer [default-value schema]]
-   [re-frame.core :refer [register-handler path trim-v after dispatch]]
+   [markiki.db :refer [default-value]]
+   [re-frame.core :refer [register-handler dispatch]]
    [cognitect.transit :as t]
+   [clojure.walk :as w]
    [ajax.core :refer [GET POST]]))
 
 ;; -- Handlers ----------------------------------------------------------------
@@ -16,8 +17,8 @@
    ;; Kick off the GET, making sure to supply a callback for success and failure
    (ajax.core/GET
     "markiki.json"
-    {:handler       #(dispatch [:process-response %1]) ;; Further dispatch !!
-     :error-handler #(dispatch [:bad-response %1])})
+    {:handler       #(dispatch [:process-response %]) ;; Further dispatch !!
+     :error-handler #(dispatch [:bad-response %])})
    default-value))
 
 
@@ -26,10 +27,9 @@
  (fn [db [_ response]]
    (let [r (t/reader :json)
          articles (t/read r response)]
-     ;(println articles)
      (-> db
          (assoc :loading? false) ;; take away that modal
-         (assoc :articles articles)))))
+         (assoc :articles (into [] (map w/keywordize-keys articles)))))))
 
 
 (register-handler
@@ -44,3 +44,9 @@
  :searchbar-change
  (fn [db [_ searchstring]]
    (assoc db :searchbar searchstring)))
+
+
+(register-handler
+ :view-article
+ (fn [db [_ path]]
+   (assoc db :last-article path)))

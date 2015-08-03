@@ -22,4 +22,4 @@
 (register-sub
   :articles
   (fn [db _]
-      (reaction (vals (:articles @db)))))
+      (reaction (:articles @db))))
