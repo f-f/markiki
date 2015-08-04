@@ -15,8 +15,7 @@
 
 (defn article-link []
   (fn [{:keys [path title text last-modified]}]
-    [:li [:a {:href (str "#" path)
-              :on-click #(dispatch [:view-article path])} title]]))
+    [:li [:a {:href (str "#" path)} title]]))
 
 (defn articles-list [articles]
   [:ul#articles-list
