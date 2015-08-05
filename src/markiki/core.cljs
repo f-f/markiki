@@ -12,17 +12,18 @@
            [goog.history EventType]))
 
 (enable-console-print!)
+(secretary/set-config! :prefix "#")
 
 ;; -- Routes and History ------------------------------------------------------
 
-;; TODO: Routes
+(defroute "/" [] (dispatch [:view-article :root]))
+(defroute #".*" [path] (dispatch [:view-article path]))
 
 (def history
   (doto (History.)
     (events/listen EventType.NAVIGATE
                    (fn [event] (secretary/dispatch! (.-token event))))
     (.setEnabled true)))
-
 
 ;; -- Entry Point -------------------------------------------------------------
 
