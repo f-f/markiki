@@ -6,6 +6,19 @@
    [clojure.walk :as w]
    [ajax.core :refer [GET POST]]))
 
+
+
+;; -- Helpers -----------------------------------------------------------------
+
+(defn article-in-list
+  "Checks if an article path is in our wiki.
+  TODO: optimize. Now is in linear time."
+  [articles path]
+  (->> articles
+       (map #(second (find % :path)))
+       (some #(when (= % path) path))))
+
+
 ;; -- Handlers ----------------------------------------------------------------
 ;;
 ;; Handlers must return a db
@@ -49,4 +62,6 @@
 (register-handler
  :view-article
  (fn [db [_ path]]
-   (assoc db :last-article path)))
+   (assoc db
+     :last-article (if (article-in-list (:articles db) path) path "")
+     :searchbar "")))
