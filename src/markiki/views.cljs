@@ -1,6 +1,7 @@
 (ns markiki.views
   (:require [reagent.core  :as reagent :refer [atom]]
-            [re-frame.core :refer [subscribe dispatch]]))
+            [re-frame.core :refer [subscribe dispatch]]
+            [clojure.string :refer [blank?]]))
 
 
 (defn searchbar []
@@ -22,6 +23,13 @@
    (for [article @articles]
      [article-link article])])
 
+(defn display-article []
+  (fn [{:keys [path title text last-modified]}]
+    [:div
+     [:h1 title]
+     [:h4 "Last modified: " last-modified] ;; TODO: pretty print
+     [:div text]])) ;; TODO: translate markdown
+
 (defn markiki-app []
   (let [loading?      (subscribe [:loading?])
         searchbar-val (subscribe [:searchbar])
@@ -34,10 +42,10 @@
         [:div
          [searchbar]
          (cond
-           (not (clojure.string/blank? @searchbar-val))
+           (not (blank? @searchbar-val))
            [:div "Searching " @searchbar-val]
-           (not (clojure.string/blank? @last-article))
-           [:div "last-article: " @last-article]
+           (not (blank? @last-article))
+           [display-article @last-article]
            :else (if (empty? @articles)
                    [:h2 "No articles!"]
                    [articles-list articles]))]))))

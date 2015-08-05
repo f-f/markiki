@@ -9,5 +9,5 @@
 (def default-value            ;; what gets put into app-db by default.
   {:articles []     ;; an empty list of articles. Use the (str) :path as the key
    :searchbar ""
-   :last-article ""
+   :last-article {}
    :loading? true })          ;; show the homepage

@@ -15,8 +15,8 @@
   TODO: optimize. Now is in linear time."
   [articles path]
   (->> articles
-       (map #(second (find % :path)))
-       (some #(when (= % path) path))))
+       (map (fn [x] (if (= path (:path x)) x nil)))
+       (some not-empty)))
 
 
 ;; -- Handlers ----------------------------------------------------------------
@@ -63,5 +63,6 @@
  :view-article
  (fn [db [_ path]]
    (assoc db
-     :last-article (if (article-in-list (:articles db) path) path "")
+     :last-article (let [article (article-in-list (:articles db) path)]
+                     (if article article ""))
      :searchbar "")))
