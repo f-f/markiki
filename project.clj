@@ -15,6 +15,8 @@
                  [cljs-ajax "0.3.14"]
                  [secretary "1.2.3"]
                  [com.cognitect/transit-cljs "0.8.220"]
+                 [clj-fuzzy "0.1.8"]
+                 [markdown-clj "0.9.67"]
                  [reagent-forms "0.5.5"]
                  [reagent-utils "0.1.5"]]
   :main ^:skip-aot markiki.core
