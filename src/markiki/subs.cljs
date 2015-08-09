@@ -23,3 +23,8 @@
   :articles
   (fn [db _]
       (reaction (:articles @db))))
+
+(register-sub
+  :articles-tree
+  (fn [db _]
+      (reaction (:articles-tree @db))))

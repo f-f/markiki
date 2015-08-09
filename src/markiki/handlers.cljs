@@ -4,6 +4,7 @@
    [re-frame.core :refer [register-handler dispatch]]
    [cognitect.transit :as t]
    [clojure.walk :as w]
+   [clojure.string :as string]
    [ajax.core :refer [GET POST]]))
 
 
@@ -17,6 +18,18 @@
   (->> articles
        (map (fn [x] (if (= path (:path x)) x nil)))
        (some not-empty)))
+
+
+(defn make-articles-tree
+  "Takes a list of articles and builds in the state a tree for pretty print"
+  [v]
+  (let [t (atom {})]
+    (doseq [a v]
+      (let [path (-> (:path a) (string/split #"/") rest)]
+        (reset! t (assoc-in @t
+                            path
+                            (select-keys a [:path :title])))))
+    @t))
 
 
 ;; -- Handlers ----------------------------------------------------------------
@@ -39,10 +52,11 @@
  :process-response
  (fn [db [_ response]]
    (let [r (t/reader :json)
-         articles (t/read r response)]
+         articles (into [] (map w/keywordize-keys (t/read r response)))]
      (-> db
          (assoc :loading? false) ;; take away that modal
-         (assoc :articles (into [] (map w/keywordize-keys articles)))))))
+         (assoc :articles articles)
+         (assoc :articles-tree (make-articles-tree articles))))))
 
 
 (register-handler

@@ -14,14 +14,23 @@
         :on-change #(dispatch [:searchbar-change (-> % .-target .-value)])}]
       [:span.glyphicon.glyphicon-search.form-control-feedback]]]))
 
-(defn article-link []
-  (fn [{:keys [path title text last-modified]}]
-    [:li [:a {:href (str "#" path)} title]]))
+
+(defn article-link [{:keys [path title]}]
+  [:li [:a {:href (str "#" path)} title]])
+
 
 (defn articles-list [articles]
-  [:ul#articles-list
-   (for [article @articles]
-     [article-link article])])
+  [:ul.articles-list
+   (for [article articles
+         :let [k (first article)
+               v (second article)]]
+     (if (contains? v :path)
+       [article-link v]
+       [:li
+        [:h4 k]
+        [articles-list v]]))])
+
+
 
 (defn display-article []
   (fn [{:keys [path title text last-modified]}]
@@ -34,18 +43,16 @@
   (let [loading?      (subscribe [:loading?])
         searchbar-val (subscribe [:searchbar])
         last-article  (subscribe [:last-article])
-        articles      (subscribe [:articles])]
+        articles      (subscribe [:articles])
+        articles-tree (subscribe [:articles-tree])]
     (fn []
       (if @loading?
-        [:i {:class "fa fa-cog fa-spin fa-5x"
-             :style {:margin-top "3em"}}]
-        [:div
+        [:i.fa.fa-cog.fa-spin.fa-5x]
+        [:div#loaded
          [searchbar]
          (cond
-           (not (blank? @searchbar-val))
-           [:div "Searching " @searchbar-val]
-           (not (blank? @last-article))
-           [display-article @last-article]
-           :else (if (empty? @articles)
-                   [:h2 "No articles!"]
-                   [articles-list articles]))]))))
+          (not (blank? @searchbar-val)) [:div "Searching " @searchbar-val]
+          (not (blank? @last-article))  [display-article @last-article]
+          :else                         (if (empty? @articles)
+                                          [:h1 "No articles!"]
+                                          [articles-list @articles-tree]))]))))

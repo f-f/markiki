@@ -6,8 +6,9 @@
 ;; Look in core.cljs for "(dispatch-sync [:initialise-db])"
 ;;
 
-(def default-value            ;; what gets put into app-db by default.
-  {:articles []     ;; an empty list of articles. Use the (str) :path as the key
-   :searchbar ""
-   :last-article {}
-   :loading? true })          ;; show the homepage
+(def default-value
+  {:articles      []
+   :searchbar     ""
+   :last-article  {}
+   :articles-tree {}
+   :loading?      true })

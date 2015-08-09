@@ -7,6 +7,14 @@ body {
   text-align: center;
 }
 
+.fa-cog {
+  margin-top: 3em;
+}
+
+#loaded {
+  text-align: left;
+}
+
 #searchbar {
   border-radius: 3em;
 }
