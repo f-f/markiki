@@ -9,7 +9,7 @@
                  [cheshire "5.5.0"]
                  [hiccup "1.0.5"]
                  [me.raynes/fs "1.4.6"]
-                 [org.clojure/clojurescript "1.7.28"]
+                 [org.clojure/clojurescript "1.7.48"]
                  [re-frame "0.4.1"]
                  [prismatic/schema "0.4.3"]
                  [cljs-ajax "0.3.14"]
