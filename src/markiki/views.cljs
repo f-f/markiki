@@ -3,6 +3,7 @@
             [re-frame.core :refer [subscribe dispatch]]
             [cljs-time.format :as f]
             [cljs-time.coerce :as c]
+            [markdown.core :refer [md->html]]
             [clojure.string :refer [blank?]]))
 
 
@@ -39,7 +40,7 @@
      [:h1 title]
      [:h4 "Last modified: " (f/unparse (f/formatter "EEEE dd MMM yyyy HH:mm:ss")
                                        (c/from-long last-modified))]
-     [:div text]])) ;; TODO: translate markdown
+     [:div {:dangerouslySetInnerHTML {:__html (md->html text)}}]]))
 
 (defn markiki-app []
   (let [loading?      (subscribe [:loading?])
