@@ -1,6 +1,8 @@
 (ns markiki.views
   (:require [reagent.core  :as reagent :refer [atom]]
             [re-frame.core :refer [subscribe dispatch]]
+            [cljs-time.format :as f]
+            [cljs-time.coerce :as c]
             [clojure.string :refer [blank?]]))
 
 
@@ -31,12 +33,12 @@
         [articles-list v]]))])
 
 
-
 (defn display-article []
   (fn [{:keys [path title text last-modified]}]
     [:div
      [:h1 title]
-     [:h4 "Last modified: " last-modified] ;; TODO: pretty print
+     [:h4 "Last modified: " (f/unparse (f/formatter "EEEE dd MMM yyyy HH:mm:ss")
+                                       (c/from-long last-modified))]
      [:div text]])) ;; TODO: translate markdown
 
 (defn markiki-app []
