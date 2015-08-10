@@ -17,20 +17,16 @@
       [:span.glyphicon.glyphicon-search.form-control-feedback]]]))
 
 
-(defn article-link [{:keys [path title]}]
-  [:li [:a {:href (str "#" path)} title]])
-
-
-(defn articles-list [articles]
+(defn display-articles-list [articles]
   [:ul.articles-list
-   (for [article articles
-         :let [k (first article)
-               v (second article)]]
+   (for [a articles
+         :let [k (first a)
+               v (second a)]]
      (if (contains? v :path)
-       [article-link v]
+       [:li [:a {:href (str "#" (:path v))} (:title v)]]
        [:li
         [:h4 k]
-        [articles-list v]]))])
+        [display-articles-list v]]))])
 
 
 (defn display-searchlist [results]
@@ -61,7 +57,7 @@
         [:div#loaded
          [searchbar]
          (cond
-          (not (empty? @searchlist))    [display-searchlist @searchlist] ;;[:div "Searching"]
+          (not (empty? @searchlist))    [display-searchlist @searchlist]
           (not (empty? @last-article))  [display-article @last-article]
-          (not (empty? @articles))      [articles-list @articles-tree]
+          (not (empty? @articles))      [display-articles-list @articles-tree]
           :else                         [:h1 "No articles!"])]))))
