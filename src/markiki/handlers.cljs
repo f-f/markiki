@@ -5,8 +5,8 @@
    [cognitect.transit :as t]
    [clojure.walk :as w]
    [clojure.string :as string]
+   [clj-fuzzy.metrics :refer [jaro-winkler]]
    [ajax.core :refer [GET POST]]))
-
 
 
 ;; -- Helpers -----------------------------------------------------------------
@@ -30,6 +30,34 @@
                             path
                             (select-keys a [:path :title])))))
     @t))
+
+
+(defn remove-markdown
+  "Remove basic markdown syntax from a string"
+  [text]
+  (-> text
+      (string/replace #"[!&^/_<>#=+\-*`(){}\[\]\$\\@]{1,}" " ")
+      (string/replace #"\s*" " ")))
+
+
+(defn fuzzy-match
+  "Takes an article, strips the markdown and returns the fuzzy match score"
+  [article searchstring]
+  (->> (str (:title article) " " (:text article))
+       remove-markdown
+       (jaro-winkler searchstring)))
+
+
+(defn search-results
+  "Fuzzy searches into the articles list given a keyword, returns n results
+  ordered by decreasing match"
+  [articles searchstring n]
+  (->> (map (fn [a]
+              (assoc a :score (fuzzy-match a searchstring)))
+            articles)
+       (sort-by :score >)
+       (take n)
+       vec))
 
 
 ;; -- Handlers ----------------------------------------------------------------
@@ -70,7 +98,9 @@
 (register-handler
  :searchbar-change
  (fn [db [_ searchstring]]
-   (assoc db :searchbar searchstring)))
+   (assoc db :search-results (if (empty? searchstring)
+                               []
+                               (search-results (:articles db) searchstring 10)))))
 
 
 (register-handler
@@ -79,4 +109,4 @@
    (assoc db
      :last-article (let [article (article-in-list (:articles db) path)]
                      (if article article ""))
-     :searchbar "")))
+     :search-results [])))

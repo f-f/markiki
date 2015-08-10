@@ -3,8 +3,7 @@
             [re-frame.core :refer [subscribe dispatch]]
             [cljs-time.format :as f]
             [cljs-time.coerce :as c]
-            [markdown.core :refer [md->html]]
-            [clojure.string :refer [blank?]]))
+            [markdown.core :refer [md->html]]))
 
 
 (defn searchbar []
@@ -34,6 +33,14 @@
         [articles-list v]]))])
 
 
+(defn display-searchlist [results]
+  [:div.list-group
+   (for [a results]
+     [:a.list-group-item {:href (str "#" (:path a))}
+      [:span.badge [:h6 (.toFixed (:score a) 2)]]
+      [:h4 (:title a)]])])
+
+
 (defn display-article []
   (fn [{:keys [path title text last-modified]}]
     [:div
@@ -44,7 +51,7 @@
 
 (defn markiki-app []
   (let [loading?      (subscribe [:loading?])
-        searchbar-val (subscribe [:searchbar])
+        searchlist    (subscribe [:search-results])
         last-article  (subscribe [:last-article])
         articles      (subscribe [:articles])
         articles-tree (subscribe [:articles-tree])]
@@ -54,8 +61,7 @@
         [:div#loaded
          [searchbar]
          (cond
-          (not (blank? @searchbar-val)) [:div "Searching " @searchbar-val]
-          (not (blank? @last-article))  [display-article @last-article]
-          :else                         (if (empty? @articles)
-                                          [:h1 "No articles!"]
-                                          [articles-list @articles-tree]))]))))
+          (not (empty? @searchlist))    [display-searchlist @searchlist] ;;[:div "Searching"]
+          (not (empty? @last-article))  [display-article @last-article]
+          (not (empty? @articles))      [articles-list @articles-tree]
+          :else                         [:h1 "No articles!"])]))))

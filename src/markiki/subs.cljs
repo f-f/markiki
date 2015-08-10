@@ -15,9 +15,9 @@
       (reaction (:last-article @db))))
 
 (register-sub
-  :searchbar
+  :search-results
   (fn [db _]
-      (reaction (:searchbar @db))))
+      (reaction (:search-results @db))))
 
 (register-sub
   :articles
