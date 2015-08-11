@@ -1,5 +1,7 @@
 # Markiki
 
+[![Build Status](https://travis-ci.org/ff-/markiki.svg?branch=master)](https://travis-ci.org/ff-/markiki)
+
 [![Dependencies Status](http://jarkeeper.com/ff-/markiki/status.png)](http://jarkeeper.com/ff-/markiki)
 
 ### Rationale
