@@ -133,20 +133,6 @@
                 [:script "window.onload = function(){markiki.core.main();}"]])))
 
 
-(defn build-cljs
-  "Builds the Clojurescript files in the out/ folder"
-  [path]
-  (println "[OK] Building Clojurescript")
-  (let [start (System/nanoTime)]
-    (cljs/build "src"
-             {:main 'markiki.core
-              :output-to (str path "/js/markiki.js")
-              :output-dir (str path "/js/")
-              :verbose true})
-    (println "[OK] Clojurescript done. Elapsed"
-             (/ (- (System/nanoTime) start) 1e9) "seconds")))
-
-
 (defn -main [& args]
   (let [[options arguments summary] (cli args
                                          ["-h" "--help" "Print this help"
@@ -165,12 +151,13 @@
      (not path) (exit 1 (usage summary))
      (not (fs/directory? src-path)) (exit 1 invalid-path-error))
     ;; Start generating!
+    (println "[OK] Generating wiki...")
     (fs/delete-dir out-path)
     (fs/mkdir out-path)
     (generate-index out-path)
     (generate-wiki path)
     (doseq [p ["css" "fonts" "js"]] (fs/copy-dir (-> p io/resource io/file) out-path))
-    (build-cljs out-path)
+    (println "[OK] Done generating.")
     (when (:watch options)
       (start-watch [{:path src-path
                      :event-types [:create :modify :delete]
