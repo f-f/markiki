@@ -10,7 +10,7 @@
                  [hiccup "1.0.5"]
                  [me.raynes/fs "1.4.6"]
                  [cpath-clj "0.1.2"]
-                 [org.clojure/clojurescript "1.7.107" :classifier "aot"
+                 [org.clojure/clojurescript "1.7.48" :classifier "aot"
                   :exclusion [org.clojure/data.json]]
                  [org.clojure/data.json "0.2.6" :classifier "aot"]
                  [re-frame "0.4.1"]
