@@ -1,15 +1,17 @@
 (defproject markiki "0.1.0"
   :description "Static Personal Markdown Wiki"
   :url "https://github.com/ff-/markiki"
-  :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :license {:name "The MIT License"
+            :url "https://github.com/ff-/markiki/blob/master/LICENSE"}
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/tools.cli "0.3.1"]
                  [clojure-watch "0.1.11"]
                  [cheshire "5.5.0"]
                  [hiccup "1.0.5"]
                  [me.raynes/fs "1.4.6"]
-                 [org.clojure/clojurescript "1.7.48"]
+                 [org.clojure/clojurescript "1.7.48" :classifier "aot"
+                  :exclusion [org.clojure/data.json]]
+                 [org.clojure/data.json "0.2.6" :classifier "aot"]
                  [re-frame "0.4.1"]
                  [prismatic/schema "0.4.3"]
                  [cljs-ajax "0.3.14"]
@@ -23,7 +25,7 @@
   :main ^:skip-aot markiki.core
   :jvm-opts ^:replace ["-Xmx1g" "-server"]
   :node-dependencies [[source-map-support "0.3.2"]]
-  :plugins [[lein-npm "0.5.0"]]
+  :plugins [[lein-npm "0.6.1"]]
   :source-paths ["src" "target/classes"]
   :clean-targets ["out" "release"]
   :target-path "target/%s"
