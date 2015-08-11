@@ -31,6 +31,7 @@ Easy as:
 #### Options
 
 `-h, --help` : print out the help text
+
 `-w, --watch` : watch the `src/` folder for changes
 
 ### Important things
