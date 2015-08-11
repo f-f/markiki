@@ -2,6 +2,6 @@
 
 (b/watch "src"
          {:main 'markiki.core
-          :output-to "resources/js/markiki.js"
+          :output-to "resources/webres/markiki.js"
           :optimizations :advanced
           :verbose true})

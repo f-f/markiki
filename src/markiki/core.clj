@@ -5,6 +5,7 @@
             [clojure-watch.core :refer [start-watch]]
             [cheshire.core :refer :all]
             [me.raynes.fs :as fs]
+            [cpath-clj.core :as cp]
             [hiccup.core :refer :all]
             [hiccup.page :refer :all]
             [cljs.build.api :as cljs])
@@ -102,11 +103,11 @@
                         :content "width=device-width, initial-scale=1"}]
                 [:meta {:name "description" :content ""}]
                 [:meta {:name "author" :content ""}]
-                [:link {:rel "icon" :href "favicon.ico"}]
+                [:link {:rel "icon" :href "webres/favicon.ico"}]
                 [:title "Markiki - Your Markdown Wiki"]
-                (include-css "css/bootstrap.min.css")
+                (include-css "webres/bootstrap.min.css")
                 (include-css "https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css")
-                (include-css "css/markiki.css")]
+                (include-css "webres/markiki.css")]
                [:body
                 [:nav.navbar.navbar-inverse.navbar-fixed-top
                  [:div.container
@@ -129,8 +130,21 @@
                  [:div#app
                   [:i {:class "fa fa-cog fa-spin fa-5x"
                        :style "margin-top:3em;"}]]]
-                (include-js "js/markiki.js")
+                (include-js "webres/markiki.js")
                 [:script "window.onload = function(){markiki.core.main();}"]])))
+
+
+;; Credits to http://stackoverflow.com/questions/28645436/idiomatic-clojure-to-copy-resources-from-running-jar-to-outside
+(defn extract-dir-from-jar
+  "Takes a dir name inside the jar and a destination dir, and copies the res-dir
+  to the to out-dir."
+  [res-dir out-dir]
+  (doseq [[path uris] (cp/resources (io/resource res-dir))
+          :let [uri (first uris)
+                relative-path (subs path 1)
+                output-file (io/file out-dir relative-path)]]
+    (with-open [in (io/input-stream uri)]
+      (io/copy in output-file))))
 
 
 (defn -main [& args]
@@ -156,7 +170,10 @@
     (fs/mkdir out-path)
     (generate-index out-path)
     (generate-wiki path)
-    (doseq [p ["css" "fonts" "js"]] (fs/copy-dir (-> p io/resource io/file) out-path))
+    (doseq [p ["webres" "fonts"]]
+      (let [res-dir (str out-path "/" p)]
+        (fs/mkdir res-dir)
+        (extract-dir-from-jar p res-dir)))
     (println "[OK] Done generating.")
     (when (:watch options)
       (start-watch [{:path src-path
