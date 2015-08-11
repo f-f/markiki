@@ -26,9 +26,11 @@
   :main ^:skip-aot markiki.core
   :jvm-opts ^:replace ["-Xmx1g" "-server"]
   :node-dependencies [[source-map-support "0.3.2"]]
-  :plugins [[lein-npm "0.6.1"]]
+  :plugins [[lein-npm "0.6.1"]
+            [lein-bin "0.3.4"]]
   :source-paths ["src" "target/classes"]
   :clean-targets ["out" "release"]
-  :target-path "target/%s"
+  :target-path "target/"
+  :bin {:name "markiki"}
   :resource-paths ["resources"] ; non-code files included in classpath/jar
   :profiles {:uberjar {:aot :all}})
