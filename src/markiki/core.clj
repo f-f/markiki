@@ -3,7 +3,7 @@
             [clojure.string :as string]
             [clojure.java.io :as io]
             [clojure-watch.core :refer [start-watch]]
-            [cheshire.core :refer :all]
+            [cheshire.core :refer [generate-string]]
             [me.raynes.fs :as fs]
             [cpath-clj.core :as cp]
             [hiccup.core :refer :all]
@@ -24,12 +24,13 @@
         options-summary
         ""
         "What to put into the folder you provide:"
-        "  * .md files to be transformed into html"
-        "  * a folder for every category (categories can be nested as needed)"
+        "  * .md files to be transformed into html into a src/ folder"
+        "  * into this src/ folder there will be a folder for every category"
+        "    (categories can be nested as needed)"
         ""
-        "Files will be put into the output/ folder."
+        "HTML files to serve will be put into the out/ folder."
         ""
-        "Please refer to the repo for more information: https://github.com/ff-/markiki"]
+        "Please refer to the README for more info: https://github.com/ff-/markiki"]
        (string/join \newline)))
 
 
