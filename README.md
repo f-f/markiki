@@ -59,7 +59,12 @@ For bugs, questions, comments, anything really, please open an [issue](https://g
 
 ## Docker image
 
-*Coming soon.*
+`docker run --name $CONTAINER_NAME -v $SOURCE_PATH:/srv/http/markiki -p $HOST_BIND_IP_PORT:80 -d nilrecurring/markiki`
+
+
+In this case the variable `$HOST_BIND_IP_PORT` should be in the form `IP:PORT` (e.g. `0.0.0.0:80`)
+
+To build from the local Dockerfile just `docker build -t nilrecurring/markiki .`
 
 
 ## Contributors
