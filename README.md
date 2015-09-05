@@ -30,6 +30,8 @@ Easy as:
 
 `$ markiki [options] /path/to/markdown/files/`
 
+Then serve the folder `/path/to/markdown/files/out` with your favourite webserver!
+
 #### Options
 
 `-h, --help` : print out the help text
