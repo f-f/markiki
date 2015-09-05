@@ -4,7 +4,7 @@
   :license {:name "The MIT License"
             :url "https://github.com/ff-/markiki/blob/master/LICENSE"}
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [org.clojure/tools.cli "0.3.2"]
+                 [org.clojure/tools.cli "0.3.3"]
                  [clojure-watch "0.1.11"]
                  [cheshire "5.5.0"]
                  [hiccup "1.0.5"]
@@ -14,15 +14,13 @@
                   :exclusion [org.clojure/data.json]]
                  [org.clojure/data.json "0.2.6" :classifier "aot"]
                  [re-frame "0.4.1"]
-                 [prismatic/schema "0.4.3"]
+                 [prismatic/schema "1.0.1"]
                  [cljs-ajax "0.3.14"]
                  [secretary "1.2.3"]
-                 [com.cognitect/transit-cljs "0.8.220"]
+                 [com.cognitect/transit-cljs "0.8.225"]
                  [clj-fuzzy "0.3.1"]
-                 [markdown-clj "0.9.68"]
-                 [com.andrewmcveigh/cljs-time "0.3.11"]
-                 [reagent-forms "0.5.5"]
-                 [reagent-utils "0.1.5"]]
+                 [markdown-clj "0.9.70"]
+                 [com.andrewmcveigh/cljs-time "0.3.13"]]
   :main ^:skip-aot markiki.core
   :jvm-opts ^:replace ["-Xmx1g" "-server"]
   :node-dependencies [[source-map-support "0.3.2"]]
