@@ -1,5 +1,7 @@
 body {
   padding-top: 50px;
+  color: #333;
+  font-size: 18px;
 }
 
 #app {
@@ -12,10 +14,39 @@ body {
 }
 
 #loaded {
-  text-align: left;
+  text-align: center;
 }
 
 #searchbar {
   border-radius: 3em;
 }
 
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+  margin-bottom: .8em;
+}
+
+pre {
+  margin: 20px 0 30px;
+}
+
+.form-group {
+  margin: 10px 0;
+}
+
+.articles-list {
+  display: inline-block;
+  text-align: left;
+}
+
+.article, .list-group {
+  text-align: left;
+}
+
+.title {
+  text-align: center;
+}
+
+.last-edit {
+  text-align: center;
+  margin: 2em auto 3em;
+}

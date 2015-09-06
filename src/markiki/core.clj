@@ -7,8 +7,7 @@
             [me.raynes.fs :as fs]
             [cpath-clj.core :as cp]
             [hiccup.core :refer :all]
-            [hiccup.page :refer :all]
-            [cljs.build.api :as cljs])
+            [hiccup.page :refer :all])
   (:gen-class))
 
 
@@ -110,27 +109,9 @@
                 (include-css "https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css")
                 (include-css "webres/markiki.css")]
                [:body
-                [:nav.navbar.navbar-inverse.navbar-fixed-top
-                 [:div.container
-                  [:div.navbar-header
-                   [:button.navbar-toggle.collapsed
-                    {:type "button"
-                     :data-toggle "collapse"
-                     :data-target "#navbar"
-                     :aria-expanded "false"
-                     :aria-controls "navbar"}
-                    [:span.sr-only "Toggle navigation"]
-                    [:span.icon-bar]
-                    [:span.icon-bar]
-                    [:span.icon-bar]]
-                   [:a.navbar-brand {:href "#"} "Markiki"]]
-                  [:div#navbar.collapse.navbar-collapse
-                   [:ul.nav.navbar-nav
-                    [:li [:a {:href "#"} "Home"]]]]]]
-                [:div.container
-                 [:div#app
-                  [:i {:class "fa fa-cog fa-spin fa-5x"
-                       :style "margin-top:3em;"}]]]
+                [:div#app.container
+                 [:i {:class "fa fa-cog fa-spin fa-5x"
+                      :style "margin-top:3em;"}]]
                 (include-js "webres/markiki.js")
                 [:script "window.onload = function(){markiki.core.main();}"]])))
 
