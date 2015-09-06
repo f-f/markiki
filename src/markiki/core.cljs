@@ -30,5 +30,10 @@
 (defn ^:export main
   []
   (dispatch-sync [:initialize-db])
+  ;; HACK: make article routing work on page load (so you can link articles)
+  (let [old-hash (str (.-hash js/location))]
+    (when (not-empty old-hash)
+      (set! (.-hash js/location) "#")
+      (set! (.-hash js/location) old-hash)))
   (r/render [markiki.views/markiki-app]
                   (.getElementById js/document "app")))
