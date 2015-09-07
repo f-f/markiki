@@ -23,8 +23,8 @@
                  [com.andrewmcveigh/cljs-time "0.3.13"]]
   :main ^:skip-aot markiki.core
   :jvm-opts ^:replace ["-Xmx1g" "-server"]
-  :node-dependencies [[source-map-support "0.3.2"]]
-  :plugins [[lein-npm "0.6.1"]
+  ;:node-dependencies [[source-map-support "0.3.2"]]
+  :plugins [;[lein-npm "0.6.1"]
             [lein-bin "0.3.5"]]
   :source-paths ["src" "target/classes"]
   :clean-targets ["out" "release"]
