@@ -58,8 +58,10 @@
   "Takes a string, returns a trimmed down string only w/ alphabet and hyphens"
   [title]
   (-> title
-      (string/replace #"[ ]{1,}" "-")
+      (string/replace #"[ -]{1,}" "-")
       (string/replace #"[^a-zA-Z-]" "")
+      (string/split #"-")
+      ((fn [s] (string/join "-" s))) ; because join takes the coll as last arg
       string/lower-case))
 
 
@@ -69,7 +71,7 @@
   (let [json (atom [])]
     (doseq [f (fs/list-dir path)]
       ;; This is ugly. Here to avoid mapping the static folder
-      (when-not (some #{(fs/name f)} ["static"])
+      (when-not (some #{(fs/base-name f)} ["static"])
         (swap! json
                conj
                (if (fs/directory? f)
@@ -77,11 +79,14 @@
                        [new-cat new-path] (map #(str %1 "/" cat-name)
                                                [category path])]
                    (parse-tree new-path new-cat))
-                 (let [[title content] (split-title (slurp f))]
-                   {:title title
-                    :last-modified (fs/mod-time f)
-                    :path (str category "/" (pathize title))
-                    :text content})))))
+                 (let [[title content] (split-title (slurp f))
+                       name (fs/name f)
+                       ext (fs/extension f)]
+                   (when (= ext ".md")
+                     {:title title
+                      :last-modified (fs/mod-time f)
+                      :path (str category "/" (pathize name))
+                      :text content }))))))
     @json))
 
 
