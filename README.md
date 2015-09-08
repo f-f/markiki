@@ -28,32 +28,32 @@ Easy as:
 
 ## Usage
 
-`$ markiki [options] /path/to/markdown/files/`
+`$ markiki [options] /path/to/source/markdown/files/ /path/to/output/folder/`
 
-Then serve the folder `/path/to/markdown/files/out` with your favourite webserver!
+Then serve the folder `/path/to/output/folder/` with your favourite webserver!
 
 #### Options
 
 `-h, --help` : print out the help text
 
-`-w, --watch` : watch the `src/` folder for changes
+`-w, --watch` : watch the source folder for changes
 
 ### Important things
 
-- In the path you provide as a parameter to the program there should be a `src/` folder, containing your markdown files, nested as needed into folders (which will be your categories)
-- Also there must **not** be an `out/` folder, as it will be created by the program, and your wiki will be put there. So your webserver should serve `/path/to/markdown/files/out/`
-- Into the `/src` folder, any directory called `static` will be ignored, as the name is reserved for hosting static assets. (*Coming soon*)
-- Your markdown files will have a big title (single #) that will become the article title, and parsed to become the article path into the wiki too.
+- The source path you provide as a parameter to the program will containin your markdown files, nested as needed into folders (which will be your categories)
+- Your webserver should serve `/path/to/output/folder/`
+- Into the source folder, any directory called `static` will be ignored, as the name is reserved for hosting static assets. (*Coming soon*)
+- Your markdown files in the source folder will have `.md` extension, a big title (single #) that will become the article title, and their filesystem name will become the article paths into the wiki.
 
 ## Hacking
 
 - [Clone this repo](https://github.com/ff-/markiki) somewhere, then `cd markiki`
 - Install java, [install lein](http://leiningen.org/#install)
-- `./scripts/watch` to start the cljs autobuilding
+- `./scripts/watch` to start the cljs autobuilding (or `./scripts/build` for a one-time build)
 - ...Make your changes...
 - *(Tests coming soon!)*
-- In another terminal, run `lein run -- /path/to/markdown/files` everytime you want an updated version, and point your browser to `file:///path/to/markdown/files/out/index.html` (or refresh the page)
-- Alternatively, you can build also with `lein bin && target/markiki /path/to/markdown/files` etc.
+- In another terminal, run `lein run -- /path/to/source/markdown/files/ /path/to/output/folder/` everytime you want an updated version, and point your browser to `file:///path/to/output/folder/index.html` (or refresh the page)
+- Alternatively, you can build also with `lein bin && target/markiki /path/to/source/markdown/files/ /path/to/output/folder/` etc.
 
 ## Bugs
 
@@ -61,7 +61,7 @@ For bugs, questions, comments, anything really, please open an [issue](https://g
 
 ## Docker image
 
-`docker run --name $CONTAINER_NAME -v $SOURCE_PATH:/srv/http/markiki -p $HOST_BIND_IP_PORT:80 -d nilrecurring/markiki`
+`docker run --name $CONTAINER_NAME -v $SOURCE_PATH:/home/markiki -p $HOST_BIND_IP_PORT:80 -d nilrecurring/markiki`
 
 
 In this case the variable `$HOST_BIND_IP_PORT` should be in the form `IP:PORT` (e.g. `0.0.0.0:80`)

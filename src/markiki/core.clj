@@ -12,22 +12,24 @@
 
 
 (def invalid-path-error
-  "[ERROR] Make sure you provided a valid path as an argument")
+  "[ERROR] Make sure you provided valid paths as arguments")
+
+(def child-path-error
+  "[ERROR] The output folder cannot be into che source folder!")
 
 (defn usage [options-summary]
   (->> ["Markiki - a simple static markdown personal wiki."
         ""
-        "Usage: markiki [options] /path/to/markdown/files/"
+        "Usage: markiki [options] /path/to/source/markdown/files/ /path/to/output/folder/"
         ""
         "Options:"
         options-summary
         ""
-        "What to put into the folder you provide:"
-        "  * .md files to be transformed into html into a src/ folder"
-        "  * into this src/ folder there will be a folder for every category"
-        "    (categories can be nested as needed)"
+        "What to put into the source folder you provide:"
+        "  * .md files to be transformed into html"
+        "  * a folder for every category (categories can be nested as needed)"
         ""
-        "HTML files to serve will be put into the out/ folder."
+        "HTML files to serve will be put into the output folder."
         ""
         "Please refer to the README for more info: https://github.com/ff-/markiki"]
        (string/join \newline)))
@@ -91,10 +93,10 @@
 
 
 (defn generate-wiki
-  "Given a OS path it will explore the folder tree and write a json in path/out/"
-  [path]
-  (spit (str path "/out/markiki.json")
-        (generate-string (flatten (parse-tree (str path "/src") "")) {:pretty true})))
+  "Given a source path it will explore the folder tree and write a json in the out-path"
+  [src-path out-path]
+  (spit (str out-path "/markiki.json")
+        (generate-string (flatten (parse-tree src-path "")) {:pretty true})))
 
 
 (defn generate-index
@@ -134,7 +136,10 @@
       (io/copy in output-file))))
 
 
-(defn -main [& args]
+(defn -main
+  "Parse the command line args (and check for errors), then generate the json.
+  Then copy all the resources into the output folder."
+  [& args]
   (let [[options arguments summary] (cli args
                                          ["-h" "--help" "Print this help"
                                           :default false
@@ -142,21 +147,21 @@
                                          ["-w" "--watch" "Watch the folder for changes"
                                           :default false
                                           :flag true])
-        path (first arguments)
-        src-path (str path "/src")
-        out-path (str path "/out")]
+        src-path (first arguments)
+        out-path (second arguments)]
     ;; Handle help and error conditions
-    ;; The user should provide a valid directory
+    ;; The user should provide valid folders
     (cond
-     (:help options) (exit 0 (usage summary))
-     (not path) (exit 1 (usage summary))
-     (not (fs/directory? src-path)) (exit 1 invalid-path-error))
+     (:help options)                    (exit 0 (usage summary))
+     (or (not src-path) (not out-path)) (exit 1 (usage summary))
+     (not (fs/directory? src-path))     (exit 1 invalid-path-error)
+     (fs/child-of? src-path out-path)   (exit 1 child-path-error))
     ;; Start generating!
     (println "[OK] Generating wiki...")
     (fs/delete-dir out-path)
     (fs/mkdir out-path)
     (generate-index out-path)
-    (generate-wiki path)
+    (generate-wiki src-path out-path)
     (doseq [p ["webres" "fonts"]]
       (let [res-dir (str out-path "/" p)]
         (fs/mkdir res-dir)
@@ -165,8 +170,8 @@
     (when (:watch options)
       (start-watch [{:path src-path
                      :event-types [:create :modify :delete]
-                     :bootstrap (fn [path] (println "[OK] Starting to watch " path))
+                     :bootstrap (fn [path] (println "[OK] Starting to watch " src-path))
                      :callback (fn [event filename]
                                  (println "[OK] Changes detected " event filename)
-                                 (generate-wiki path))
+                                 (generate-wiki src-path out-path))
                      :options {:recursive true}}]))))
