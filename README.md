@@ -38,12 +38,16 @@ Then serve the folder `/path/to/output/folder/` with your favourite webserver!
 
 `-w, --watch` : watch the source folder for changes
 
-### Important things
+### Important things to know
 
 - The source path you provide as a parameter to the program will containin your markdown files, nested as needed into folders (which will be your categories)
 - Your webserver should serve `/path/to/output/folder/`
 - Into the source folder, any directory called `static` will be ignored, as the name is reserved for hosting static assets. (*Coming soon*)
 - Your markdown files in the source folder will have `.md` extension, a big title (single #) that will become the article title, and their filesystem name will become the article paths into the wiki.
+
+## Markdown infos
+
+- Internal links can be made with linking like `[Link description](#/internal/path)`
 
 ## Hacking
 
