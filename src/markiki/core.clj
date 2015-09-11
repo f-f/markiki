@@ -151,7 +151,8 @@
                                           :default false
                                           :flag true])
         src-path (first arguments)
-        out-path (second arguments)]
+        out-path (second arguments)
+        static-path (str src-path "/_static")]
     ;; Handle help and error conditions
     ;; The user should provide valid folders
     (cond
@@ -169,6 +170,8 @@
       (let [res-dir (str out-path "/" p)]
         (fs/mkdir res-dir)
         (extract-dir-from-jar p res-dir)))
+    ;; Copy the static resources
+    (fs/copy-dir static-path out-path)
     (println "[OK] Done generating.")
     (when (:watch options)
       (start-watch [{:path src-path

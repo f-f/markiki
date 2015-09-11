@@ -48,6 +48,7 @@ Then serve the folder `/path/to/output/folder/` with your favourite webserver!
 ## Markdown infos
 
 - Internal links can be made with linking like `[Link description](#/internal/path)`
+- Static resources should be put into the `_static` folder, and can be linked like `[Link description](_static/static-image.jpg)`
 
 ## Hacking
 
