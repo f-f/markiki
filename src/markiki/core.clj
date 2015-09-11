@@ -96,7 +96,10 @@
   "Given a source path it will explore the folder tree and write a json in the out-path"
   [src-path out-path]
   (spit (str out-path "/markiki.json")
-        (generate-string (flatten (parse-tree src-path "")) {:pretty true})))
+        (generate-string (->> (parse-tree src-path "")
+                              flatten
+                              (remove nil?))
+                         {:pretty true})))
 
 
 (defn generate-index
