@@ -28,27 +28,46 @@ Easy as:
 
 ## Usage
 
-`$ markiki [options] /path/to/source/markdown/files/ /path/to/output/folder/`
+`$ markiki [options] /path/to/source/markdown/files/`
 
-Then serve the folder `/path/to/output/folder/` with your favourite webserver!
+Then serve the folder `/path/to/source/markdown/files/_output/` with your favourite webserver!
 
-#### Options
+### Important things to know
+
+- The source path you provide as a parameter will have to be structured as follows:
+```
+.
++-- _config.yml                         // this is optional
++-- _posts
+|   +-- some-random-file.md
+|   +-- a-category
+|   |   +-- this-is-ignored.jpg
+|   |   +-- a-categorized-file.md
+|   |   +-- a-subcategory               // you can nest categories as needed
+|   |   |   +-- subcategorized-text.md
++-- _output                             // here there will be your html to serve
++-- _static
+    +-- an-image-you-will-link.jpg
+```
+- Your webserver should serve the `/path/to/source/markdown/files/_output/` folder
+- Into the source folder, any directory called `_static` will be ignored, as the name is reserved for hosting static assets.
+- Your markdown files in the source folder will have `.md` extension, a big title (single #) that will become the article title, and their filesystem name will become the article path into the wiki.
+
+
+### Command line options
 
 `-h, --help` : print out the help text
 
 `-w, --watch` : watch the source folder for changes
 
-### Important things to know
-
-- The source path you provide as a parameter to the program will containin your markdown files, nested as needed into folders (which will be your categories)
-- Your webserver should serve `/path/to/output/folder/`
-- Into the source folder, any directory called `static` will be ignored, as the name is reserved for hosting static assets. (*Coming soon*)
-- Your markdown files in the source folder will have `.md` extension, a big title (single #) that will become the article title, and their filesystem name will become the article paths into the wiki.
-
-## Markdown infos
+### Markdown infos
 
 - Internal links can be made with linking like `[Link description](#/internal/path)`
 - Static resources should be put into the `_static` folder, and can be linked like `[Link description](_static/static-image.jpg)`
+
+### `_config.yml` options
+
+// TODO
 
 ## Hacking
 
@@ -57,8 +76,8 @@ Then serve the folder `/path/to/output/folder/` with your favourite webserver!
 - `./scripts/watch` to start the cljs autobuilding (or `./scripts/build` for a one-time build)
 - ...Make your changes...
 - *(Tests coming soon!)*
-- In another terminal, run `lein run -- /path/to/source/markdown/files/ /path/to/output/folder/` everytime you want an updated version, and point your browser to `file:///path/to/output/folder/index.html` (or refresh the page)
-- Alternatively, you can build also with `lein bin && target/markiki /path/to/source/markdown/files/ /path/to/output/folder/` etc.
+- In another terminal, run `lein run -- /path/to/source/markdown/files/` everytime you want an updated version, and point your browser to `file:///path/to/source/markdown/files/_output/index.html` (or refresh the page)
+- Alternatively, you can build also with `lein bin && target/markiki /path/to/source/markdown/files/` etc.
 
 ## Bugs
 
@@ -71,7 +90,7 @@ For bugs, questions, comments, anything really, please open an [issue](https://g
 
 In this case the variable `$HOST_BIND_IP_PORT` should be in the form `IP:PORT` (e.g. `0.0.0.0:80`)
 
-To build from the local Dockerfile just `docker build -t nilrecurring/markiki .`
+To build from the local Dockerfile just `docker build -t nilrecurring/markiki .`, to get it from the Docker Hub instead type `docker pull nilrecurring/markiki`
 
 
 ## Contributors

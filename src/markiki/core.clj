@@ -12,24 +12,23 @@
 
 
 (def invalid-path-error
-  "[ERROR] Make sure you provided valid paths as arguments")
+  "[ERROR] Make sure you provided a valid path. Are all the folders in place?")
 
-(def child-path-error
-  "[ERROR] The output folder cannot be into che source folder!")
 
 (defn usage [options-summary]
   (->> ["Markiki - a simple static markdown personal wiki."
         ""
-        "Usage: markiki [options] /path/to/source/markdown/files/ /path/to/output/folder/"
+        "Usage: markiki [options] /path/to/source/markdown/files/"
         ""
         "Options:"
         options-summary
         ""
         "What to put into the source folder you provide:"
-        "  * .md files to be transformed into html"
-        "  * a folder for every category (categories can be nested as needed)"
+        "  * .md files into the '_posts' folder to be transformed into html"
+        "  * into '_posts': a folder for every category (categories can be nested as needed)"
+        "  * an optional '_config.yml' file"
         ""
-        "HTML files to serve will be put into the output folder."
+        "HTML files to serve will be put into the '_output' folder."
         ""
         "Please refer to the README for more info: https://github.com/ff-/markiki"]
        (string/join \newline)))
@@ -63,7 +62,7 @@
       (string/replace #"[ -]{1,}" "-")
       (string/replace #"[^a-zA-Z-]" "")
       (string/split #"-")
-      ((fn [s] (string/join "-" s))) ; because join takes the coll as last arg
+      ((fn [s] (string/join "-" s))) ;; Because join takes the coll as last arg
       string/lower-case))
 
 
@@ -72,8 +71,8 @@
   [path category]
   (let [json (atom [])]
     (doseq [f (fs/list-dir path)]
-      ;; This is ugly. Here to avoid mapping the static folder
-      (when-not (some #{(fs/base-name f)} ["static"])
+      ;; This is ugly. Here to avoid mapping of reserved filenames
+      (when-not (some #{(fs/base-name f)} ["_static" "_config.yml"])
         (swap! json
                conj
                (if (fs/directory? f)
@@ -103,7 +102,7 @@
 
 
 (defn generate-index
-  "Writes the index.html in out/"
+  "Writes the index.html in the _output folder"
   [path]
   (spit (str path "/index.html")
         (html5 [:head
@@ -150,16 +149,18 @@
                                          ["-w" "--watch" "Watch the folder for changes"
                                           :default false
                                           :flag true])
-        src-path (first arguments)
-        out-path (second arguments)
-        static-path (str src-path "/_static")]
+        path        (first arguments)
+        src-path    (str path "/_posts")
+        out-path    (str path "/_output")
+        static-path (str path "/_static")
+        config-path (str path "/_config.yml")]
     ;; Handle help and error conditions
     ;; The user should provide valid folders
     (cond
-     (:help options)                    (exit 0 (usage summary))
-     (or (not src-path) (not out-path)) (exit 1 (usage summary))
-     (not (fs/directory? src-path))     (exit 1 invalid-path-error)
-     (fs/child-of? src-path out-path)   (exit 1 child-path-error))
+     (:help options)                        (exit 0 (usage summary))
+     (not path)                             (exit 1 (usage summary))
+     ;; (not (fs/exists? config-path))         (exit 1 invalid-path-error)
+     (not (fs/directory? src-path))         (exit 1 invalid-path-error))
     ;; Start generating!
     (println "[OK] Generating wiki...")
     (fs/delete-dir out-path)

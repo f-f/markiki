@@ -1,4 +1,4 @@
-server.document-root = "/srv/http/markiki/"
+server.document-root = "/home/markiki/_output/"
 
 server.port = 80
 

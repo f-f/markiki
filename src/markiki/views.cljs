@@ -59,12 +59,13 @@
 
 (defn display-article []
   (fn [{:keys [path title text last-modified]}]
-    [:div.article.row
-     [:h1.title title]
-     [:h4.last-edit "Last modified: " (f/unparse
-                                       (f/formatter "EEEE dd MMM yyyy HH:mm:ss")
-                                       (c/from-long last-modified))]
-     [:div.col-md-8.col-md-offset-2 {:dangerouslySetInnerHTML {:__html (md->html text)}}]]))
+    (let [parsed (str (md->html text))]
+      [:div.article.row
+       [:h1.title title]
+       [:h4.last-edit "Last modified: " (f/unparse
+                                         (f/formatter "EEEE dd MMM yyyy HH:mm:ss")
+                                         (c/from-long last-modified))]
+       [:div.col-md-8.col-md-offset-2 {:dangerouslySetInnerHTML {:__html parsed}}]])))
 
 
 (defn markiki-app []
