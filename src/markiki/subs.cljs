@@ -28,3 +28,13 @@
   :articles-tree
   (fn [db _]
       (reaction (:articles-tree @db))))
+
+(register-sub
+  :title
+  (fn [db _]
+      (reaction (:title @db))))
+
+(register-sub
+  :description
+  (fn [db _]
+      (reaction (:description @db))))

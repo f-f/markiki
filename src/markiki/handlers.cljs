@@ -80,11 +80,12 @@
  :process-response
  (fn [db [_ response]]
    (let [r (t/reader :json)
-         articles (into [] (map w/keywordize-keys (t/read r response)))]
-     (-> db
+         data (w/keywordize-keys (t/read r response))]
+     (println data)
+     (println articles)
+     (-> (merge db data)
          (assoc :loading? false) ;; take away that modal
-         (assoc :articles articles)
-         (assoc :articles-tree (make-articles-tree articles))))))
+         (assoc :articles-tree (make-articles-tree (:articles data)))))))
 
 
 (register-handler

@@ -7,6 +7,7 @@
             [me.raynes.fs :as fs]
             [cpath-clj.core :as cp]
             [hiccup.core :refer :all]
+            [clj-yaml.core :as yaml]
             [hiccup.page :refer :all])
   (:gen-class))
 
@@ -32,6 +33,11 @@
         ""
         "Please refer to the README for more info: https://github.com/ff-/markiki"]
        (string/join \newline)))
+
+
+(def default-config
+  {:title "Markiki - Your Markdown Wiki"
+   :description "This is a test description, replace it in the config file!\n\nYou can *use markdown* of course :)"})
 
 
 (defn exit
@@ -91,19 +97,29 @@
     @json))
 
 
-(defn generate-wiki
-  "Given a source path it will explore the folder tree and write a json in the out-path"
-  [src-path out-path]
+(defn generate-data
+  "Given the source and the config paths generates the map with all the data"
+  [src-path config-path]
+  (merge default-config
+         (if (fs/exists? config-path)
+           (yaml/parse-string (slurp config-path))
+           {})
+         {:articles (->> (parse-tree src-path "")
+                         flatten
+                         (remove nil?))}))
+
+
+(defn generate-json
+  "Given the source map with the data it spits a json in the output path"
+  [wiki out-path]
   (spit (str out-path "/markiki.json")
-        (generate-string (->> (parse-tree src-path "")
-                              flatten
-                              (remove nil?))
+        (generate-string wiki
                          {:pretty true})))
 
 
 (defn generate-index
   "Writes the index.html in the _output folder"
-  [path]
+  [path data]
   (spit (str path "/index.html")
         (html5 [:head
                 [:meta {:charset "utf-8"}]
@@ -113,7 +129,7 @@
                 [:meta {:name "description" :content ""}]
                 [:meta {:name "author" :content ""}]
                 [:link {:rel "icon" :href "webres/favicon.ico"}]
-                [:title "Markiki - Your Markdown Wiki"]
+                [:title (:title data)]
                 (include-css "webres/bootstrap.min.css")
                 (include-css "https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css")
                 (include-css "webres/markiki.css")]
@@ -162,23 +178,25 @@
      ;; (not (fs/exists? config-path))         (exit 1 invalid-path-error)
      (not (fs/directory? src-path))         (exit 1 invalid-path-error))
     ;; Start generating!
-    (println "[OK] Generating wiki...")
-    (fs/delete-dir out-path)
-    (fs/mkdir out-path)
-    (generate-index out-path)
-    (generate-wiki src-path out-path)
-    (doseq [p ["webres" "fonts"]]
-      (let [res-dir (str out-path "/" p)]
-        (fs/mkdir res-dir)
-        (extract-dir-from-jar p res-dir)))
-    ;; Copy the static resources
-    (fs/copy-dir static-path out-path)
-    (println "[OK] Done generating.")
-    (when (:watch options)
-      (start-watch [{:path src-path
-                     :event-types [:create :modify :delete]
-                     :bootstrap (fn [path] (println "[OK] Starting to watch " src-path))
-                     :callback (fn [event filename]
-                                 (println "[OK] Changes detected " event filename)
-                                 (generate-wiki src-path out-path))
-                     :options {:recursive true}}]))))
+    (let [wiki (generate-data src-path config-path)]
+      (println "[OK] Generating wiki...")
+      (fs/delete-dir out-path)
+      (fs/mkdir out-path)
+      (generate-index out-path wiki)
+      (generate-json wiki out-path)
+      (doseq [p ["webres" "fonts"]]
+        (let [res-dir (str out-path "/" p)]
+          (fs/mkdir res-dir)
+          (extract-dir-from-jar p res-dir)))
+      ;; Copy the static resources
+      (fs/copy-dir static-path out-path)
+      (println "[OK] Done generating.")
+      (when (:watch options)
+        (start-watch [{:path src-path
+                       :event-types [:create :modify :delete]
+                       :bootstrap (fn [path] (println "[OK] Starting to watch " src-path))
+                       :callback (fn [event filename]
+                                   (println "[OK] Changes detected " event filename)
+                                   (generate-json (generate-data src-path config-path)
+                                                  out-path))
+                       :options {:recursive true}}])))))

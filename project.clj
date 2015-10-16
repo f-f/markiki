@@ -20,6 +20,7 @@
                  [com.cognitect/transit-cljs "0.8.225"]
                  [clj-fuzzy "0.3.1"]
                  [markdown-clj "0.9.74"]
+                 [clj-yaml "0.4.0"]
                  [com.andrewmcveigh/cljs-time "0.3.14"]]
   :main ^:skip-aot markiki.core
   :jvm-opts ^:replace ["-Xmx1g" "-server"]

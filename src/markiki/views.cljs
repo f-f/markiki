@@ -6,6 +6,10 @@
             [markdown.core :refer [md->html]]))
 
 
+(defn parse-md [text]
+  (-> text md->html str))
+
+
 (defn searchbar []
   (fn []
     [:form
@@ -17,7 +21,7 @@
       [:span.glyphicon.glyphicon-search.form-control-feedback]]]))
 
 
-(defn nav []
+(defn nav [title]
   [:nav.navbar.navbar-inverse.navbar-fixed-top
    [:div.container
     [:div.navbar-header
@@ -31,7 +35,7 @@
       [:span.icon-bar]
       [:span.icon-bar]
       [:span.icon-bar]]
-     [:a.navbar-brand {:href "#"} "Markiki"]]
+     [:a.navbar-brand {:href "#"} title]]
     [:div#navbar.collapse.navbar-collapse
      [:ul.nav.navbar-nav.navbar-right
       [:li [searchbar]]]]]])
@@ -45,7 +49,7 @@
      (if (contains? v :path)
        [:li [:a {:href (str "#" (:path v))} (:title v)]]
        [:li
-        [:h4 k]
+        [:h3 k]
         [display-articles-list v]]))])
 
 
@@ -54,18 +58,17 @@
    (for [a results]
      [:a.list-group-item {:href (str "#" (:path a))}
       [:span.badge [:h6 (.toFixed (:score a) 2)]]
-      [:h4 (:title a)]])])
+      [:h3 (:title a)]])])
 
 
 (defn display-article []
   (fn [{:keys [path title text last-modified]}]
-    (let [parsed (str (md->html text))]
       [:div.article.row
        [:h1.title title]
        [:h4.last-edit "Last modified: " (f/unparse
                                          (f/formatter "EEEE dd MMM yyyy HH:mm:ss")
                                          (c/from-long last-modified))]
-       [:div.col-md-8.col-md-offset-2 {:dangerouslySetInnerHTML {:__html parsed}}]])))
+       [:div.col-md-8.col-md-offset-2 {:dangerouslySetInnerHTML {:__html (parse-md text)}}]]))
 
 
 (defn markiki-app []
@@ -73,16 +76,21 @@
         searchlist    (subscribe [:search-results])
         last-article  (subscribe [:last-article])
         articles      (subscribe [:articles])
-        articles-tree (subscribe [:articles-tree])]
+        articles-tree (subscribe [:articles-tree])
+        title         (subscribe [:title])
+        description   (subscribe [:description])]
     (fn []
       (if @loading?
         [:i.fa.fa-cog.fa-spin.fa-5x]
         [:div
-         [nav]
+         [nav @title]
          [:div#loaded.container
           (cond
            (not (empty? @searchlist))    [display-searchlist @searchlist]
            (not (empty? @last-article))  [display-article @last-article]
-           (not (empty? @articles))      [display-articles-list @articles-tree]
+           (not (empty? @articles))      [:div
+                                          (when (not (empty? @description))
+                                            [:div.desc {:dangerouslySetInnerHTML {:__html (parse-md @description)}}])
+                                          [display-articles-list @articles-tree]]
            :else                         [:h1 "No articles!"])]]))))
 

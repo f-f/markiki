@@ -20,4 +20,8 @@
                                ;; a category is a new level of maps. It gets parsed
                                ;; to build the home index
 
+   :title             ""       ;; The title of the wiki
+
+   :description       ""       ;; Optional description for the homepage
+
    :loading?          true })  ;; If it's loading display the spinning cog
