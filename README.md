@@ -67,7 +67,14 @@ Then serve the folder `/path/to/source/markdown/files/_output/` with your favour
 
 ### `_config.yml` options
 
-// TODO
+- title: the title of the webpage
+- description: a brief description (markdown enabled) that will appear before your article list
+
+Sample config:
+```yaml
+title: My fancy Wiki
+description: *Wow, markdown works also here*
+```
 
 ## Hacking
 
