@@ -138,6 +138,8 @@
                  [:i {:class "fa fa-cog fa-spin fa-5x"
                       :style "margin-top:3em;"}]]
                 (include-js "webres/markiki.js")
+                (include-js "https://code.jquery.com/jquery-2.1.4.min.js")
+                (include-js "webres/bootstrap.min.js")
                 [:script "window.onload = function(){markiki.core.main();}"]])))
 
 

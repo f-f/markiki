@@ -1,11 +1,11 @@
 body {
   padding-top: 50px;
   color: #333;
-  font-size: 18px;
+  font-size:25px;
 }
 
 #app {
-  padding: 40px 15px;
+  padding: 65px 20px;
   text-align: center;
 }
 
@@ -25,17 +25,54 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   margin-bottom: .8em;
 }
 
+h1, .h1 {
+  font-size: 2em;
+}
+
 pre {
   margin: 20px 0 30px;
 }
 
+ul {
+  list-style: none;
+}
+
+#loaded li a {
+  padding-left: 1.6em;
+}
+
+#loaded li a:before {
+  content: '\f178';
+  font-family: FontAwesome;
+  display: inline-block;
+  width: 1.6em; /* same as padding-left set on li */
+  margin-left: -1.6em; /* same as padding-left set on li */
+}
+
+.navbar-brand {
+  font-size: 1.3em;
+}
+
+.desc {
+  margin-bottom: 2em;
+}
+
 .form-group {
-  margin: 10px 0;
+  margin: 10px;
+}
+
+.form-control {
+  font-size: 18px;
 }
 
 .articles-list {
   display: inline-block;
   text-align: left;
+}
+
+.articles-list h3 {
+  text-transform: capitalize;
+  margin-bottom: .2em;
 }
 
 .article, .list-group {
