@@ -37,6 +37,10 @@ ul {
   list-style: none;
 }
 
+#loaded ul {
+  padding-bottom: .5em;
+}
+
 #loaded li a {
   padding-left: 1.6em;
 }

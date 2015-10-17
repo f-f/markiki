@@ -66,7 +66,7 @@
   [title]
   (-> title
       (string/replace #"[ -]{1,}" "-")
-      (string/replace #"[^a-zA-Z-]" "")
+      (string/replace #"[^a-zA-Z0-9-]" "")
       (string/split #"-")
       ((fn [s] (string/join "-" s))) ;; Because join takes the coll as last arg
       string/lower-case))

@@ -6,7 +6,9 @@
             [markdown.core :refer [md->html]]))
 
 
-(defn parse-md [text]
+(defn parse-md
+  "Parses markdown and preps it for innerHTML insertion"
+  [text]
   (-> text md->html str))
 
 
@@ -42,15 +44,23 @@
 
 
 (defn display-articles-list [articles]
-  [:ul.articles-list
-   (for [a articles
-         :let [k (first a)
-               v (second a)]]
-     (if (contains? v :path)
-       [:li [:a {:href (str "#" (:path v))} (:title v)]]
-       [:li
-        [:h3 k]
-        [display-articles-list v]]))])
+  (let [is-article? #(contains? (second %) :path)]
+    [:ul.articles-list
+     (for [a (sort-by (fn [x]
+                        (if (is-article? x)
+                          (str (apply str
+                                      (repeat (count articles)
+                                              "z"))
+                               (first x))
+                          (first x)))
+                      articles)
+           :let [k (first a)
+                 v (second a)]]
+       (if (is-article? a)
+         [:li [:a {:href (str "#" (:path v))} (:title v)]]
+         [:li
+          [:h3 k]
+          [display-articles-list v]]))]))
 
 
 (defn display-searchlist [results]

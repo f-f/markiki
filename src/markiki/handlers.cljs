@@ -81,8 +81,6 @@
  (fn [db [_ response]]
    (let [r (t/reader :json)
          data (w/keywordize-keys (t/read r response))]
-     (println data)
-     (println articles)
      (-> (merge db data)
          (assoc :loading? false) ;; take away that modal
          (assoc :articles-tree (make-articles-tree (:articles data)))))))
