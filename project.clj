@@ -1,4 +1,4 @@
-(defproject markiki "0.3.0"
+(defproject markiki "0.3.1"
   :description "Static Personal Markdown Wiki"
   :url "https://github.com/ff-/markiki"
   :license {:name "The MIT License"
