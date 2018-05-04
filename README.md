@@ -4,6 +4,11 @@
 
 [![Dependencies Status](http://jarkeeper.com/ff-/markiki/status.svg)](http://jarkeeper.com/ff-/markiki)
 
+## IMPORTANT NOTICE
+
+> The project is currently unmaintained - the world is getting better at wikis I think. So the project might or might not see many new commits from me. However, I'll have very quick response time of PRs.
+
+
 ### Rationale
 
 Have you ever woke up sweating in the middle of the night trying to recall the deploy procedure of an application you started two years ago on your server only to find out that you irreparably forgot it?
